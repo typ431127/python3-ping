@@ -38,6 +38,25 @@ round-trip (ms)  min/avg/max = 55.468/55.795/56.232
 
 
 == Revision history ==
+January 26, 2012
+----------------
+* Fixing BUG #4 - competability with python 2.x [tested with 2.7]
+- Packet data building is different for 2.x and 3.x.
+'cose of the string/bytes difference.
+* Fixing BUG #10 - the multiple resolv issue.
+- When pinging domain names insted of hosts (for exmaple google.com)
+you can get different IP every time you try to resolv it, we should
+resolv the host only once and stick to that IP.
+* Fixing BUGs #3 #10 - Doing hostname resolv only once.
+* Fixing BUG #14 - Removing all 'global' stuff.
+- You should not use globul! Its bad for you...and its not thread safe!
+* Fix - forcing the use of different times on linux/windows for
+more accurate mesurments. (time.time - linux/ time.clock - windows)
+* Adding quiet_ping function - This way we'll be able to use this script
+as external lib.
+* Changing default timeout to 3s. (1second is not enought)
+* Switching data syze to packet size. It's easyer for the user to ignore the
+fact that the packet headr is 8b and the datasize 64 will make packet with
 
 ==== Oct. 17, 2011 ====
 * [[https://github.com/jedie/python-ping/pull/6|Bugfix if host is unknown]]
