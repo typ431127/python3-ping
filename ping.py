@@ -38,8 +38,15 @@
     Enhancements and fixes by Georgi Kolev:
       -> http://github.com/jedie/python-ping/
 
+    Bug fix by Andrejs Rozitis:
+      -> http://github.com/rozitis/python-ping/
+
     Revision history
     ~~~~~~~~~~~~~~~~
+
+    March 19, 2013
+    --------------
+    * Fixing bug to prevent divide by 0 during run-time.
 
     January 26, 2012
     ----------------
@@ -516,7 +523,8 @@ def quiet_ping(hostname, timeout = 3000, count = 3,
 
     if myStats.pktsSent > 0:
         myStats.fracLoss = (myStats.pktsSent - myStats.pktsRcvd)/myStats.pktsSent
-    myStats.avrgTime = myStats.totTime / myStats.pktsRcvd
+    if myStats.pktsRcvd > 0:
+        myStats.avrgTime = myStats.totTime / myStats.pktsRcvd
 
     # return tuple(max_rtt, min_rtt, avrg_rtt, percent_lost)
     return myStats.maxTime, myStats.minTime, myStats.avrgTime, myStats.fracLoss
