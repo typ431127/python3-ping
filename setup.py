@@ -95,6 +95,10 @@ def get_authors():
         authors = "[Error: %s]" % err
     return authors
 
+install_requires = [
+    'docutils',
+    'python-creole',
+]
 
 setup(
     name='python-ping',
@@ -125,5 +129,6 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: System :: Networking :: Monitoring",
     ],
+    install_requires=install_requires,
     test_suite="tests",
 )
