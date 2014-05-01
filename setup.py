@@ -5,8 +5,8 @@
     distutils setup
     ~~~~~~~~~~~~~~~
 
-    :homepage: https://github.com/jedie/python-ping/
-    :copyleft: 1989-2011 by the python-ping team, see AUTHORS for more details.
+    :homepage: https://github.com/emamirazavi/python3-ping
+    :copyleft: 1989-2014 by the python-ping team, see AUTHORS for more details.
     :license: GNU GPL v2, see LICENSE for more details.
 """
 
@@ -104,7 +104,7 @@ setup(
     author=get_authors(),
     maintainer="Jens Diemer",
     maintainer_email="python-ping@jensdiemer.de",
-    url='https://github.com/jedie/python-ping/',
+    url='https://github.com/emamirazavi/python3-ping',
     keywords="ping icmp network latency",
     packages=find_packages(),
     include_package_data=True, # include package data under svn source control
