@@ -198,7 +198,10 @@
 """
 
 #=============================================================================#
+import argparse
 import os, sys, socket, struct, select, time, signal
+
+__description__ = 'A pure python ICMP ping implementation using raw sockets.'
 
 if sys.platform == "win32":
     # On Windows, the best timer is time.clock()
@@ -206,6 +209,10 @@ if sys.platform == "win32":
 else:
     # On most other platforms the best timer is time.time()
     default_timer = time.time
+
+NUM_PACKETS = 3
+PACKET_SIZE = 64
+WAIT_TIMEOUT = 3.0
 
 #=============================================================================#
 # ICMP parameters
@@ -276,7 +283,7 @@ def checksum(source_string):
     return answer
 
 #=============================================================================#
-def do_one(myStats, destIP, hostname, timeout, mySeqNumber, numDataBytes, quiet = False):
+def do_one(myStats, destIP, hostname, timeout, mySeqNumber, packet_size, quiet = False):
     """
     Returns either the delay (in ms) or None on timeout.
     """
@@ -290,7 +297,7 @@ def do_one(myStats, destIP, hostname, timeout, mySeqNumber, numDataBytes, quiet 
 
     my_ID = os.getpid() & 0xFFFF
 
-    sentTime = send_one_ping(mySocket, destIP, my_ID, mySeqNumber, numDataBytes)
+    sentTime = send_one_ping(mySocket, destIP, my_ID, mySeqNumber, packet_size)
     if sentTime == None:
         mySocket.close()
         return delay
@@ -320,14 +327,14 @@ def do_one(myStats, destIP, hostname, timeout, mySeqNumber, numDataBytes, quiet 
     return delay
 
 #=============================================================================#
-def send_one_ping(mySocket, destIP, myID, mySeqNumber, numDataBytes):
+def send_one_ping(mySocket, destIP, myID, mySeqNumber, packet_size):
     """
     Send one ping to the given >destIP<.
     """
     #destIP  =  socket.gethostbyname(destIP)
 
     # Header is type (8), code (8), checksum (16), id (16), sequence (16)
-    # (numDataBytes - 8) - Remove header size from packet size
+    # (packet_size - 8) - Remove header size from packet size
     myChecksum = 0
 
     # Make a dummy heder with a 0 checksum.
@@ -342,10 +349,10 @@ def send_one_ping(mySocket, destIP, myID, mySeqNumber, numDataBytes):
     # or it will make packets with unexpected size.
     if sys.version[:1] == '2':
         bytes = struct.calcsize("d")
-        data = ((numDataBytes - 8) - bytes) * "Q"
+        data = ((packet_size - 8) - bytes) * "Q"
         data = struct.pack("d", default_timer()) + data
     else:
-        for i in range(startVal, startVal + (numDataBytes-8)):
+        for i in range(startVal, startVal + (packet_size-8)):
             padBytes += [(i & 0xff)]  # Keep chars in the 0-255 range
         #data = bytes(padBytes)
         data = bytearray(padBytes)
@@ -444,8 +451,8 @@ def signal_handler(signum, frame):
     sys.exit(0)
 
 #=============================================================================#
-def verbose_ping(hostname, timeout = 3000, count = 3,
-                     numDataBytes = 64, path_finder = False):
+def verbose_ping(hostname, timeout=WAIT_TIMEOUT, count=NUM_PACKETS,
+                 packet_size=PACKET_SIZE, path_finder=False):
     """
     Send >count< ping to >destIP< with the given >timeout< and display
     the result.
@@ -461,7 +468,7 @@ def verbose_ping(hostname, timeout = 3000, count = 3,
 
     try:
         destIP = socket.gethostbyname(hostname)
-        print("\nPYTHON PING %s (%s): %d data bytes" % (hostname, destIP, numDataBytes))
+        print("\nPYTHON PING %s (%s): %d data bytes" % (hostname, destIP, packet_size))
     except socket.gaierror as e:
         print("\nPYTHON PING: Unknown host: %s (%s)" % (hostname, e.args[1]))
         print()
@@ -470,7 +477,7 @@ def verbose_ping(hostname, timeout = 3000, count = 3,
     myStats.thisIP = destIP
 
     for i in range(count):
-        delay = do_one(myStats, destIP, hostname, timeout, mySeqNumber, numDataBytes)
+        delay = do_one(myStats, destIP, hostname, timeout, mySeqNumber, packet_size)
 
         if delay == None:
             delay = 0
@@ -484,8 +491,8 @@ def verbose_ping(hostname, timeout = 3000, count = 3,
     dump_stats(myStats)
 
 #=============================================================================#
-def quiet_ping(hostname, timeout = 3000, count = 3,
-                     numDataBytes = 64, path_finder = False):
+def quiet_ping(hostname, timeout=WAIT_TIMEOUT, count=NUM_PACKETS,
+               packet_size=PACKET_SIZE, path_finder=False):
     """
     Same as verbose_ping, but the results are returned as tuple
     """
@@ -505,12 +512,12 @@ def quiet_ping(hostname, timeout = 3000, count = 3,
     if path_finder:
         fakeStats = MyStats()
         do_one(fakeStats, destIP, hostname, timeout,
-                        mySeqNumber, numDataBytes, quiet=True)
+                        mySeqNumber, packet_size, quiet=True)
         time.sleep(0.5)
 
     for i in range(count):
         delay = do_one(myStats, destIP, hostname, timeout,
-                        mySeqNumber, numDataBytes, quiet=True)
+                        mySeqNumber, packet_size, quiet=True)
 
         if delay == None:
             delay = 0
@@ -530,22 +537,29 @@ def quiet_ping(hostname, timeout = 3000, count = 3,
     return myStats.maxTime, myStats.minTime, myStats.avrgTime, myStats.fracLoss
 
 #=============================================================================#
+def main():
+    
+    parser = argparse.ArgumentParser(description=__description__)
+    parser.add_argument('-q', '--quiet', action='store_true',
+                        help='quiet output')
+    parser.add_argument('-c', '--count', type=int, default=NUM_PACKETS,
+                        help=('number of packets to be sent '
+                              '(default: %(default)s)'))
+    parser.add_argument('-W', '--timeout', type=float, default=WAIT_TIMEOUT,
+                        help=('time to wait for a response in seoncds '
+                              '(default: %(default)s)'))
+    parser.add_argument('-s', '--packet-size', type=int, default=PACKET_SIZE,
+                        help=('number of data bytes to be sent '
+                              '(default: %(default)s)'))
+    parser.add_argument('destination')
+    args = parser.parse_args()
+
+    ping = verbose_ping
+    if args.quiet:
+        ping = quiet_ping
+
+    ping(args.destination, timeout=args.timeout*1000, count=args.count,
+         packet_size=args.packet_size)
+
 if __name__ == '__main__':
-
-    # These should work:
-    verbose_ping("8.8.8.8")
-    verbose_ping("heise.de")
-    verbose_ping("google.com")
-
-    # Inconsistent on Windows w/ ActivePython (Python 3.2 resolves correctly
-    # to the local host, but 2.7 tries to resolve to the local *gateway*)
-    verbose_ping("localhost")
-
-    # Should fail with 'getaddrinfo failed':
-    verbose_ping("foobar_url.foobar")
-
-    # Should fail (timeout), but it depends on the local network:
-    verbose_ping("192.168.255.254")
-
-    # Should fails with 'The requested address is not valid in its context':
-    verbose_ping("0.0.0.0")
+    main()
