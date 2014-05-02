@@ -23,7 +23,7 @@ Usage
 
 ::
 
-  ~/python-ping$ sudo ./ping.py google.com
+  ~/python3-ping$ sudo ./ping.py google.com
 
   PYTHON-PING google.com (209.85.148.99): 55 data bytes
   64 bytes from google.com (209.85.148.99): icmp_seq=0 ttl=54 time=56.2 ms
@@ -33,6 +33,10 @@ Usage
   ----google.com PYTHON PING Statistics----
   3 packets transmitted, 3 packets received, 0.0% packet loss
   round-trip (ms)  min/avg/max = 55.468/55.795/56.232
+
+  ~/python3-ping]# ./ping.py
+  usage: ping.py [-h] [-q] [-c COUNT] [-W TIMEOUT] [-s PACKET_SIZE] destination
+  ping.py: error: the following arguments are required: destination
 
 
 TODOs
