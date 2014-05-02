@@ -2,8 +2,8 @@
 # coding: utf-8
 
 """
-    distutils setup
-    ~~~~~~~~~~~~~~~
+    python3-ping setup
+    ~~~~~~~~~~~~~~~~~~
 
     :homepage: https://github.com/emamirazavi/python3-ping
     :copyleft: 1989-2014 by the python-ping team, see AUTHORS for more details.
