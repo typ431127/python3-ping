@@ -2,10 +2,10 @@
 # coding: utf-8
 
 """
-    distutils setup
-    ~~~~~~~~~~~~~~~
+    python3-ping setup
+    ~~~~~~~~~~~~~~~~~~
 
-    :homepage: https://github.com/jedie/python-ping/
+    :homepage: https://github.com/emamirazavi/python3-ping
     :copyleft: 1989-2011 by the python-ping team, see AUTHORS for more details.
     :license: GNU GPL v2, see LICENSE for more details.
 """
@@ -97,14 +97,13 @@ def get_authors():
 
 
 setup(
-    name='python-ping',
+    name='python3-ping',
     version=get_version_from_git(),
     description='A pure python ICMP ping implementation using raw sockets.',
     long_description=long_description,
     author=get_authors(),
-    maintainer="Jens Diemer",
-    maintainer_email="python-ping@jensdiemer.de",
-    url='https://github.com/jedie/python-ping/',
+    maintainer="Mohammad Emami",
+    url='https://github.com/emamirazavi/python3-ping',
     keywords="ping icmp network latency",
     packages=find_packages(),
     include_package_data=True, # include package data under svn source control
