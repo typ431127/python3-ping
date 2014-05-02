@@ -39,9 +39,11 @@ TODOs
 =====
 
 * refactor ping.py
-* create a CLI interface
 * add a "suprocess ping", with output parser
 
+New Features
+============
+* CLI interface -> thanks for Yu-Jie Lin to add this feature with argparse module
 
 Contribute
 ==========
