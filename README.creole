@@ -38,8 +38,10 @@ round-trip (ms)  min/avg/max = 55.468/55.795/56.232
 
 
 == Revision history ==
-January 26, 2012
-----------------
+==== May 1, 2014 ====
+* Python 3 support added to ping and the project was renamed to python3-ping 
+
+==== January 26, 2012 ====
 * Fixing BUG #4 - competability with python 2.x [tested with 2.7]
 - Packet data building is different for 2.x and 3.x.
 'cose of the string/bytes difference.
@@ -126,6 +128,6 @@ bytes always and then do an htons().
 
 == Links ==
 
-| Sourcecode at GitHub | https://github.com/jedie/python-ping |
-| Python Package Index | http://pypi.python.org/pypi/python-ping/ |
+| Sourcecode at GitHub | https://github.com/emamirazavi/python3-ping |
+| Python Package Index | http://pypi.python.org/pypi/python3-ping/ |
 | IRC                  | [[http://www.pylucid.org/permalink/304/irc-channel|#pylucid on freenode.net]]

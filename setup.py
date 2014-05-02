@@ -21,8 +21,8 @@ from setuptools import setup, find_packages, Command
 PACKAGE_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 
-#VERBOSE = True
-VERBOSE = False
+VERBOSE = True
+#VERBOSE = False
 
 def _error(msg):
     if VERBOSE:
@@ -52,10 +52,10 @@ def get_version_from_git():
 
     output = process.stdout.readline().strip()
     try:
-        raw_timestamp, hash = output.split("-", 1)
+        raw_timestamp, hash = output.decode().split("-", 1)
         timestamp = int(raw_timestamp)
     except Exception as err:
-        return _error("Error in git log output! Output was: %r" % output)
+        return _error("Error in git log output! Output was: %r, error is: %s" % (output, err))
 
     try:
         timestamp_formatted = time.strftime("%Y.%m.%d", time.gmtime(timestamp))
@@ -96,16 +96,17 @@ def get_authors():
     return authors
 
 install_requires = [
-    'docutils',
-    'python-creole',
+    #'docutils',
+    #'python-creole',
 ]
-
+print(long_description)
 setup(
-    name='python-ping',
+    name='python3-ping',
     version=get_version_from_git(),
     description='A pure python ICMP ping implementation using raw sockets.',
     long_description=long_description,
     author=get_authors(),
+    author_email="emamirazavi@gmail.com",
     maintainer="Mohammad Emami",
     maintainer_email="emamirazavi@gmail.com",
     url='https://github.com/emamirazavi/python3-ping',
