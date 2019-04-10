@@ -212,7 +212,7 @@ __description__ = 'A pure python ICMP ping implementation using raw sockets.'
 
 if sys.platform == "win32":
     # On Windows, the best timer is time.clock()
-    default_timer = time.clock
+    default_timer = time.perf_counter
 else:
     # On most other platforms the best timer is time.time()
     default_timer = time.time
